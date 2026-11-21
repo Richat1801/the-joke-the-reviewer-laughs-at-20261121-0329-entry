@@ -98,12 +98,13 @@ function codePoints(s: string): number {
 }
 
 // Weighted score: the judge weighs the laugh first, then truth; the
-// reviewer's seat comes next, then freshness; brevity is a small bonus so a
-// tighter line wins a close call.
+// reviewer's seat comes next, then freshness; length is a bonus under 140
+// code points and a penalty above it, so an over-long line loses ground
+// instead of merely gaining less.
 function score(j: Joke): number {
   const len = codePoints(j.text);
-  const brevityBonus = Math.max(0, (200 - len) / 100); // 0..2, shorter is better
-  return j.surprise * 3 + j.truth * 2 + j.reviewer * 2 + j.freshness + brevityBonus;
+  const lengthTerm = (140 - len) / 50; // positive under 140, increasingly negative above it
+  return j.surprise * 3 + j.truth * 2 + j.reviewer * 2 + j.freshness + lengthTerm;
 }
 
 function pickWinner(bank: Joke[]): Joke {
